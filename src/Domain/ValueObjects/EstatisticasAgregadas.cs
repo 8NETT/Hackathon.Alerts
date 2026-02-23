@@ -36,4 +36,37 @@ public sealed record EstatisticasAgregadas
             Quantidade = novaQuantidade
         };
     }
+
+    internal static EstatisticasAgregadas Combinar(IEnumerable<EstatisticasAgregadas> estatisticasAgregadas)
+    {
+        var lista = estatisticasAgregadas.ToArray();
+
+        if (lista.Length == 0)
+            throw new InvalidOperationException("Não é possível combinar uma coleção vazia de estatísticas agregadas.");
+
+
+        double somaTotal = 0;
+        int qtdTotal = 0;
+        double min = double.PositiveInfinity;
+        double max = double.NegativeInfinity;
+
+        foreach (var estatisticas in lista)
+        {
+            somaTotal += estatisticas.Soma;
+            qtdTotal += estatisticas.Quantidade;
+            min = Math.Min(min, estatisticas.Minima);
+            max = Math.Max(max, estatisticas.Maxima);
+        }
+
+        var media = somaTotal / qtdTotal;
+
+        return new EstatisticasAgregadas
+        {
+            Minima = min,
+            Maxima = max,
+            Media = media,
+            Soma = somaTotal,
+            Quantidade = qtdTotal
+        };
+    }
 }

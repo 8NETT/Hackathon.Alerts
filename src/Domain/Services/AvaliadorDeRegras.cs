@@ -1,0 +1,99 @@
+﻿using Domain.Entities;
+using Domain.Messaging;
+using Domain.Persistence;
+using Domain.ValueObjects;
+
+namespace Domain.Services;
+
+public sealed class AvaliadorDeRegras
+{
+    private readonly ILeituraAgregadaRepository _repo;
+    private readonly IAlertaPublisher _publisher;
+    private readonly IAntiSpamDeAlertas _antiSpam;
+
+    public AvaliadorDeRegras(ILeituraAgregadaRepository repo, IAlertaPublisher publisher, IAntiSpamDeAlertas antiSpam)
+    {
+        _repo = repo;
+        _publisher = publisher;
+        _antiSpam = antiSpam;
+    }
+
+    public async Task AvaliarAsync(RegraDeAlerta regra, LeituraAgregada janelaAtual, CancellationToken cancellation = default)
+    {
+        if (!regra.Ativa) 
+            return;
+        if (regra.Tipo != janelaAtual.Tipo) 
+            return;
+
+        // Ponto de corte: "até o fim da janela atual"
+        var fimExclusivo = janelaAtual.Janela.Fim;
+
+        var janelas = await _repo.ObterUltimasJanelasAsync(
+            janelaAtual.TalhaoId,
+            janelaAtual.Tipo,
+            fimExclusivo,
+            regra.JanelasConsecutivas,
+            cancellation);
+
+        if (janelas.Count < regra.JanelasConsecutivas)
+            return; // não há dados suficientes ainda
+
+        if (regra.ExigirJanelaCompleta && janelas.Any(j => !j.JanelaCompleta))
+            return;
+
+        if (!SaoJanelasConsecutivas(janelas))
+            return;
+
+        // Combina estatísticas
+        var combinadas = janelas.Select(j => j.Estatisticas).Combinar();
+
+        // Verifica se disparou o alarme
+        var valor = ObterValorDeComparacao(janelaAtual, combinadas, regra.Alvo);
+        var disparou = regra.Operador.Compara(valor, regra.Limite);
+
+        if (!disparou) 
+            return;
+
+        // Anti-spam/dedup para não disparar sempre
+        if (!await _antiSpam.PodeDispararAsync(janelaAtual.TalhaoId, regra.Id, fimExclusivo, cancellation))
+            return;
+
+        var alerta = new AlertaDisparado(janelaAtual, regra, valor);
+
+        await _publisher.PublicarAsync(alerta, cancellation);
+        await _antiSpam.RegistrarDisparoAsync(janelaAtual.TalhaoId, regra.Id, fimExclusivo, cancellation);
+    }
+
+    private double ObterValorDeComparacao(LeituraAgregada janelaAtual, EstatisticasAgregadas combinadas, EstatisticaAlvo alvo)
+    {
+        if (alvo == EstatisticaAlvo.Minima) return combinadas.Minima;
+        if (alvo == EstatisticaAlvo.Maxima) return combinadas.Maxima;
+        if (alvo == EstatisticaAlvo.Media) return combinadas.Media;
+        if (alvo == EstatisticaAlvo.Soma) return combinadas.Soma;
+        if (alvo == EstatisticaAlvo.UltimoValor) return janelaAtual.UltimoValor;
+        
+        throw new InvalidOperationException($"Alvo desconhecido: {alvo}");
+    }
+
+    private bool SaoJanelasConsecutivas(IReadOnlyList<LeituraAgregada> janelas)
+    {
+        if (janelas.Count <= 1)
+            return true;
+
+        // Garante ordenação crescente
+        var ordenadas = janelas
+            .OrderBy(j => j.Janela.Inicio)
+            .ToList();
+
+        for (int i = 0; i < ordenadas.Count - 1; i++)
+        {
+            var atual = ordenadas[i];
+            var proxima = ordenadas[i + 1];
+
+            if (atual.Janela.Inicio.AddHours(1) != proxima.Janela.Inicio)
+                return false;
+        }
+
+        return true;
+    }
+}

@@ -1,15 +1,10 @@
 ﻿namespace Domain.ValueObjects;
 
-public sealed record TipoSensor : IEquatable<TipoSensor>
-{
-    public string Codigo { get; }
+public sealed record TipoSensor : Enumeration
+{=
+    private TipoSensor() : base() { }
 
-    private TipoSensor() { Codigo = null!; }
-
-    private TipoSensor(string codigo)
-    {
-        Codigo = codigo;
-    }
+    private TipoSensor(string codigo) : base(codigo) { }
 
     public static readonly TipoSensor Temperatura = new("T");
     public static readonly TipoSensor Umidade = new("U");
