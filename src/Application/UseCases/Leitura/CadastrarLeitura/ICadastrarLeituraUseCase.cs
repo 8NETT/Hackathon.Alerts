@@ -1,4 +1,4 @@
-﻿namespace Application.UseCases.Leitura;
+﻿namespace Application.UseCases.Leitura.CadastrarLeitura;
 
 public interface ICadastrarLeituraUseCase : IUseCase<CadastrarLeituraDTO>
 {

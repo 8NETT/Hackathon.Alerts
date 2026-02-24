@@ -1,6 +1,6 @@
-﻿using Domain.Parsing;
+﻿using Domain.ValueObjects;
 
-namespace Application.UseCases.Leitura;
+namespace Application.UseCases.Leitura.CadastrarLeitura;
 
 internal sealed class CadastrarLeituraValidator : AbstractValidator<CadastrarLeituraDTO>
 {
@@ -13,7 +13,7 @@ internal sealed class CadastrarLeituraValidator : AbstractValidator<CadastrarLei
         RuleFor(d => d.Tipo)
             .NotEmpty()
             .WithMessage("O Tipo é obrigatório.")
-            .Must(tipo => TipoSensorParser.TryParse(tipo, out _))
+            .Must(tipo => TipoSensor.TryParse(tipo, out _))
             .WithMessage("Tipo inválido.");
 
         RuleFor(d => d.Valor)

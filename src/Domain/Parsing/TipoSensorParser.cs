@@ -2,7 +2,7 @@
 
 namespace Domain.Parsing;
 
-public sealed class TipoSensorParser
+internal sealed class TipoSensorParser
 {
     public static TipoSensor Parse(string value)
     {
