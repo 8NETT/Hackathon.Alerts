@@ -3,7 +3,7 @@ using Domain.ValueObjects;
 
 namespace Domain.Persistence;
 
-public interface ILeituraAgregadaRepository
+public interface ILeituraAgregadaPersistence
 {
     Task<IReadOnlyList<LeituraAgregada>> ObterUltimasJanelasAsync(
         Guid talhaoId,

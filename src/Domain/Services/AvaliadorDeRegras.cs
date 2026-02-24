@@ -7,11 +7,11 @@ namespace Domain.Services;
 
 public sealed class AvaliadorDeRegras
 {
-    private readonly ILeituraAgregadaRepository _repo;
+    private readonly ILeituraAgregadaPersistence _repo;
     private readonly IAlertaPublisher _publisher;
     private readonly IAntiSpamDeAlertas _antiSpam;
 
-    public AvaliadorDeRegras(ILeituraAgregadaRepository repo, IAlertaPublisher publisher, IAntiSpamDeAlertas antiSpam)
+    public AvaliadorDeRegras(ILeituraAgregadaPersistence repo, IAlertaPublisher publisher, IAntiSpamDeAlertas antiSpam)
     {
         _repo = repo;
         _publisher = publisher;
