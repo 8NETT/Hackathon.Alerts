@@ -18,6 +18,8 @@ public sealed class LeituraAgregada : BaseEntity
         PrimeiroTimestamp <= Janela.Inicio.AddMinutes(ToleranciaEmMinutos) &&
         UltimoTimestamp >= Janela.Fim.AddMinutes(-ToleranciaEmMinutos);
 
+    private LeituraAgregada() { Tipo = null!; Unidade = null!; Janela = null!; Estatisticas = null!; }
+
     public LeituraAgregada(Leitura leitura)
     {
         if (leitura is null)

@@ -3,7 +3,7 @@
 namespace Domain.ValueObjects;
 
 public sealed record TipoSensor : Enumeration
-{=
+{
     private TipoSensor() : base() { }
 
     private TipoSensor(string codigo) : base(codigo) { }
