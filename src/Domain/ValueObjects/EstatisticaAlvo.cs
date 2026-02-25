@@ -11,6 +11,7 @@ public sealed record EstatisticaAlvo : Enumeration
     public static readonly EstatisticaAlvo Media = new("med");
     public static readonly EstatisticaAlvo Soma = new("sum");
     public static readonly EstatisticaAlvo UltimoValor = new("last");
+    public static readonly EstatisticaAlvo Variacao = new("var");
 
     public override string ToString() =>
         Codigo switch
@@ -20,6 +21,7 @@ public sealed record EstatisticaAlvo : Enumeration
             "med" => "Média",
             "sum" => "Soma",
             "last" => "Último Valor",
+            "var" => "Variação",
             _ => throw new InvalidOperationException("Estatística Alvo inválida.")
         };
 

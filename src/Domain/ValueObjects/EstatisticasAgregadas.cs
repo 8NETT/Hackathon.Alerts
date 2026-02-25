@@ -7,6 +7,7 @@ public sealed record EstatisticasAgregadas
     public double Media { get; private set; }
     public double Soma { get; private set; }
     public int Quantidade { get; private set; }
+    public double Variacao => Maxima - Minima;
 
     private EstatisticasAgregadas() { }
     
