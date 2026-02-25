@@ -15,7 +15,7 @@ public sealed record Severidade : Enumeration
     public static Severidade Parse(string? value) =>
         SeveridadeParser.Parse(value);
 
-    public static bool TryParse(string? value, out Severidade severidade) =>
+    public static bool TryParse(string? value, out Severidade? severidade) =>
         SeveridadeParser.TryParse(value, out severidade);
 
     public override string ToString() =>

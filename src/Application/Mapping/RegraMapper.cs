@@ -7,18 +7,17 @@ namespace Application.Mapping;
 
 internal static class RegraMapper
 {
-    public static RegraDeAlerta ToEntity(this CadastrarRegraDTO dto) => new()
-    {
-        Tipo = TipoSensor.Parse(dto.Tipo),
-        Alvo = EstatisticaAlvo.Parse(dto.Alvo),
-        Operador = OperadorComparacao.Parse(dto.Operador),
-        Limite = dto.Limite,
-        JanelasConsecutivas = dto.JanelasConsecutivas,
-        ExigirJanelaCompleta = dto.ExigirJanelaCompleta,
-        Nome = dto.Nome,
-        Severidade = Severidade.Parse(dto.Severidade),
-        Ativa = true
-    };
+    public static RegraDeAlerta ToEntity(this CadastrarRegraDTO dto) =>
+        RegraDeAlerta.Nova
+            .Tipo(TipoSensor.Parse(dto.Tipo))
+            .Alvo(EstatisticaAlvo.Parse(dto.Alvo))
+            .Operador(OperadorComparacao.Parse(dto.Operador))
+            .Limite(dto.Limite)
+            .JanelasConsecutivas(dto.JanelasConsecutivas)
+            .ExigirJanelaCompleta(dto.ExigirJanelaCompleta)
+            .Nome(dto.Nome)
+            .Severidade(Severidade.Parse(dto.Severidade))
+            .Criar();
 
     public static RegraDTO ToDTO(this RegraDeAlerta regra) => new()
     {

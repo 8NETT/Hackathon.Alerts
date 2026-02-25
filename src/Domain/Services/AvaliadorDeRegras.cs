@@ -47,32 +47,16 @@ public sealed class AvaliadorDeRegras
         // Combina estatísticas
         var combinadas = janelas.Select(j => j.Estatisticas).Combinar();
 
-        // Verifica se disparou o alarme
-        var valor = ObterValorDeComparacao(janelaAtual, combinadas, regra.Alvo);
-        var disparou = regra.Operador.Compara(valor, regra.Limite);
-
-        if (!disparou) 
+        // Verifica se deve disparar o alarme
+        if (!regra.DeveDispararAlerta(janelaAtual, combinadas, out var alerta))
             return;
 
-        // Anti-spam/dedup para não disparar sempre
+        // Anti-spam para não disparar sempre
         if (!await _antiSpam.PodeDispararAsync(janelaAtual.TalhaoId, regra.Id, fimExclusivo, cancellation))
             return;
 
-        var alerta = new AlertaDisparado(janelaAtual, regra, valor);
-
-        await _publisher.PublicarAsync(alerta, cancellation);
+        await _publisher.PublicarAsync(alerta!, cancellation);
         await _antiSpam.RegistrarDisparoAsync(janelaAtual.TalhaoId, regra.Id, fimExclusivo, cancellation);
-    }
-
-    private double ObterValorDeComparacao(LeituraAgregada janelaAtual, EstatisticasAgregadas combinadas, EstatisticaAlvo alvo)
-    {
-        if (alvo == EstatisticaAlvo.Minima) return combinadas.Minima;
-        if (alvo == EstatisticaAlvo.Maxima) return combinadas.Maxima;
-        if (alvo == EstatisticaAlvo.Media) return combinadas.Media;
-        if (alvo == EstatisticaAlvo.Soma) return combinadas.Soma;
-        if (alvo == EstatisticaAlvo.UltimoValor) return janelaAtual.UltimoValor;
-        
-        throw new InvalidOperationException($"Alvo desconhecido: {alvo}");
     }
 
     private bool SaoJanelasConsecutivas(IReadOnlyList<LeituraAgregada> janelas)
