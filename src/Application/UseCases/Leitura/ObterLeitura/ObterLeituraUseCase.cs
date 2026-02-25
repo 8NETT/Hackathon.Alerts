@@ -12,6 +12,13 @@ public sealed class ObterLeituraUseCase : BaseUseCase<ObterLeituraDTO, LeituraAg
 
     protected override async Task<Result<LeituraAgregadaDTO>> ExecuteCoreAsync(ObterLeituraDTO dto, CancellationToken cancellation = default)
     {
+        var talhao = await _unitOfWork.TalhaoRepository.ObterAsync(dto.TalhaoId, cancellation);
+
+        if (talhao is null)
+            return Result.NotFound("Talhão não localizado.");
+        if (talhao.ProprietarioId != dto.UsuarioId)
+            return Result.Forbidden("Usuário não é proprietário do talhão.");
+
         var tipo = TipoSensor.Parse(dto.Tipo);
         var leitura = await _unitOfWork.LeituraAgregadaRepository.ObterDoHorario(dto.TalhaoId, tipo, dto.Timestamp);
 
