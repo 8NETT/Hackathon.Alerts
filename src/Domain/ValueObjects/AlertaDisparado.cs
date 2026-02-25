@@ -9,7 +9,7 @@ public sealed record AlertaDisparado
     public Guid RegraId { get; }
     public TipoSensor Tipo { get; }
     public string NomeRegra { get; }
-    public double ValorObservador { get; }
+    public double ValorObservado { get; }
     public DateTimeOffset Timestamp { get; }
     public Severidade Severidade { get; }
 
@@ -20,7 +20,7 @@ public sealed record AlertaDisparado
         RegraId = regra.Id;
         Tipo = leitura.Tipo;
         NomeRegra = regra.Nome;
-        ValorObservador = valorObservado;
+        ValorObservado = valorObservado;
         Timestamp = DateTimeOffset.UtcNow;
         Severidade = regra.Severidade;
     }
