@@ -7,4 +7,5 @@ public sealed record EstatisticasAgregadasDTO
     public required double Media { get; init; }
     public required double Soma { get; init; }
     public required int Quantidade { get; init; }
+    public required double Variacao { get; init; }
 }

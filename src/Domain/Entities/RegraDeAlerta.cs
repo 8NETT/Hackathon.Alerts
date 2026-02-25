@@ -5,6 +5,7 @@ namespace Domain.Entities;
 public sealed class RegraDeAlerta : BaseEntity
 {
     public required TipoSensor Tipo { get; init; }
+    public required UnidadeDeMedida Unidade { get; init; }
     public required EstatisticaAlvo Alvo { get; init; }
     public required OperadorComparacao Operador { get; init; }
     public required double Limite { get; init; }

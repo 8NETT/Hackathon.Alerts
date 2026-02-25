@@ -11,6 +11,7 @@ internal static class LeituraMapper
     {
         TalhaoId = dto.TalhaoId,
         Tipo = TipoSensor.Parse(dto.Tipo),
+        Unidade = UnidadeDeMedida.Parse(dto.Unidade),
         Valor = dto.Valor,
         Timestamp = dto.Timestamp
     };
@@ -19,6 +20,7 @@ internal static class LeituraMapper
     {
         TalhaoId = leitura.TalhaoId,
         Tipo = leitura.Tipo.ToString(),
+        Unidade = leitura.Unidade.ToString(),
         Janela = leitura.Janela.ToDTO(),
         Estatisticas = leitura.Estatisticas.ToDTO(),
         PrimeiroTimestamp = leitura.PrimeiroTimestamp,

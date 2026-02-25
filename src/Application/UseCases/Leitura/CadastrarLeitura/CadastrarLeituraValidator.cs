@@ -16,6 +16,12 @@ internal sealed class CadastrarLeituraValidator : AbstractValidator<CadastrarLei
             .Must(tipo => TipoSensor.TryParse(tipo, out _))
             .WithMessage("Tipo inválido.");
 
+        RuleFor(d => d.Unidade)
+            .NotEmpty()
+            .WithMessage("A Unidade é obrigatório.")
+            .Must(tipo => UnidadeDeMedida.TryParse(tipo, out _))
+            .WithMessage("Unidade inválida.");
+
         RuleFor(d => d.Valor)
             .Must(v => !double.IsNaN(v) && !double.IsInfinity(v))
             .WithMessage("Valor inválido.");

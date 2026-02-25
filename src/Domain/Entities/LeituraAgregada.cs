@@ -8,6 +8,7 @@ public sealed class LeituraAgregada : BaseEntity
 
     public Guid TalhaoId { get; private set; }
     public TipoSensor Tipo { get; private set; }
+    public UnidadeDeMedida Unidade { get; private set; }
     public Periodo Janela { get; private set; }
     public EstatisticasAgregadas Estatisticas { get; private set; }
     public DateTimeOffset PrimeiroTimestamp { get; private set; }
@@ -28,6 +29,7 @@ public sealed class LeituraAgregada : BaseEntity
         Id = Guid.NewGuid();
         TalhaoId = leitura.TalhaoId;
         Tipo = leitura.Tipo;
+        Unidade = leitura.Unidade;
         Janela = new Periodo(inicio, fim);
         Estatisticas = new EstatisticasAgregadas(leitura.Valor);
         PrimeiroTimestamp = leitura.Timestamp;
@@ -45,6 +47,8 @@ public sealed class LeituraAgregada : BaseEntity
             throw new InvalidOperationException("Tipo incompatível para agregação.");
         if (!Janela.Contem(leitura.Timestamp))
             throw new InvalidOperationException("Leitura fora do período de agregação.");
+        if (leitura.Unidade != Unidade)
+            throw new InvalidOperationException("Leitura com unidade divergente.");
         
         Estatisticas = Estatisticas.Agregar(leitura.Valor);
         PrimeiroTimestamp = PrimeiroTimestamp < leitura.Timestamp ? PrimeiroTimestamp : leitura.Timestamp;
