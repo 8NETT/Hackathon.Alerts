@@ -1,0 +1,12 @@
+﻿global using Azure.Monitor.OpenTelemetry.AspNetCore;
+global using FluentValidation;
+global using Microsoft.AspNetCore.Authentication.JwtBearer;
+global using Microsoft.IdentityModel.Tokens;
+global using Microsoft.OpenApi;
+global using OpenTelemetry.Metrics;
+global using OpenTelemetry.Resources;
+global using OpenTelemetry.Trace;
+global using Serilog;
+global using Serilog.Events;
+global using System.IdentityModel.Tokens.Jwt;
+global using System.Security.Claims;

@@ -1,11 +1,10 @@
 ﻿using Domain.ValueObjects;
 
-namespace Infrastructure.Messaging;
+namespace Infrastructure.Messaging.Events;
 
-internal sealed class AlertaEvent
+internal sealed record AlertaEvent
 {
     public Guid Id { get; }
-    public string Type { get; }
     public Guid TalhaoId { get; }
     public Guid RegraId { get; }
     public string Tipo { get; }
@@ -17,7 +16,6 @@ internal sealed class AlertaEvent
     public AlertaEvent(AlertaDisparado alerta)
     {
         Id = alerta.Id;
-        Type = "AlertaDisparado";
         TalhaoId = alerta.TalhaoId;
         RegraId = alerta.RegraId;
         Tipo = alerta.Tipo.ToString();

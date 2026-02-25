@@ -1,5 +1,6 @@
 ﻿using Domain.Messaging;
 using Domain.ValueObjects;
+using Infrastructure.Messaging.Events;
 
 namespace Infrastructure.Messaging;
 
@@ -25,12 +26,12 @@ public sealed class AlertaEventPublisher : IAlertaPublisher
         var eventData = new EventData(bytes);
 
         // Metadados úteis para roteamento/observabilidade
-        eventData.Properties["type"] = @event.Type;
+        eventData.Properties["type"] = nameof(AlertaDisparado);
         eventData.Properties["eventId"] = @event.Id.ToString();
         eventData.ContentType = "application/json";
 
         // Envia o evento
         await _producer.SendAsync([eventData], cancellation);
-        _logger.LogInformation("Publicado evento {EventType} com ID {EventId}", @event.Type, @event.Id);
+        _logger.LogInformation("Publicado evento {EventType} com ID {EventId}", nameof(AlertaDisparado), @event.Id);
     }
 }
