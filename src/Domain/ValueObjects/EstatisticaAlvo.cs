@@ -1,4 +1,6 @@
-﻿namespace Domain.ValueObjects;
+﻿using Domain.Parsing;
+
+namespace Domain.ValueObjects;
 
 public sealed record EstatisticaAlvo : Enumeration
 {
@@ -13,6 +15,12 @@ public sealed record EstatisticaAlvo : Enumeration
     public static readonly EstatisticaAlvo UltimoValor = new("last");
     public static readonly EstatisticaAlvo Variacao = new("var");
 
+    public static EstatisticaAlvo Parse(string? value) => 
+        EstatisticaAlvoParser.Parse(value);
+
+    public static bool TryParse(string? value, out EstatisticaAlvo? estatisticaAlvo) =>
+        EstatisticaAlvoParser.TryParse(value, out estatisticaAlvo);
+
     public override string ToString() =>
         Codigo switch
         {
@@ -24,5 +32,4 @@ public sealed record EstatisticaAlvo : Enumeration
             "var" => "Variação",
             _ => throw new InvalidOperationException("Estatística Alvo inválida.")
         };
-
 }

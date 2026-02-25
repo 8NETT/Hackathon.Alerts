@@ -1,4 +1,5 @@
-﻿using Application.Persistence;
+﻿using Application.Mapping;
+using Application.Persistence;
 
 namespace Application.UseCases.Talhao.CadastrarTalhao;
 

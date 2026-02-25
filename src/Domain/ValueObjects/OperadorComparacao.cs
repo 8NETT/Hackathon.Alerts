@@ -1,4 +1,6 @@
-﻿namespace Domain.ValueObjects;
+﻿using Domain.Parsing;
+
+namespace Domain.ValueObjects;
 
 public sealed record OperadorComparacao : Enumeration
 {
@@ -12,6 +14,12 @@ public sealed record OperadorComparacao : Enumeration
     public static readonly OperadorComparacao MenorQue = new("<");
     public static readonly OperadorComparacao MenorOuIgual = new("<=");
     public static readonly OperadorComparacao Igual = new("=");
+
+    public static OperadorComparacao Parse(string? value) =>
+        OperadorComparacaoParser.Parse(value);
+
+    public static bool TryParse(string? value, out OperadorComparacao? operador) =>
+        OperadorComparacaoParser.TryParse(value, out operador);
 
     public bool Compara(double valor, double limite) =>
         Codigo switch
