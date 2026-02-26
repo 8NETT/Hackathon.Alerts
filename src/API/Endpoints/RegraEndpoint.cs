@@ -1,5 +1,7 @@
 ﻿using API.Security;
 using API.Validation;
+using Application.UseCases.Regra.AtivarRegra;
+using Application.UseCases.Regra.DesativarRegra;
 using Application.UseCases.Regra.ObterRegra;
 using Application.UseCases.Regra.ObterRegrasDoTipo;
 
@@ -38,6 +40,33 @@ internal static class RegraEndpoint
                 return Results.BadRequest(result.ValidationErrors);
 
             return Results.Ok(result.Value);
+        });
+
+
+        group.MapPatch("/ativar/{id:guid}", async (
+            Guid id,
+            IAtivarRegraUseCase useCase,
+            CancellationToken ct) =>
+        {
+            var result = await useCase.HandleAsync(id, ct);
+
+            if (result.IsNotFound())
+                return Results.NotFound();
+
+            return Results.Ok();
+        });
+
+        group.MapPatch("/desativar/{id:guid}", async (
+            Guid id,
+            IDesativarRegraUseCase useCase,
+            CancellationToken ct) =>
+        {
+            var result = await useCase.HandleAsync(id, ct);
+
+            if (result.IsNotFound())
+                return Results.NotFound();
+
+            return Results.Ok();
         });
 
         return group;

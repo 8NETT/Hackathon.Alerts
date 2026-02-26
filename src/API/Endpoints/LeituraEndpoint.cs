@@ -3,8 +3,6 @@ using API.Requests;
 using API.Security;
 using API.Validation;
 using Application.UseCases.Leitura.ObterLeitura;
-using Application.UseCases.Regra.AtivarRegra;
-using Application.UseCases.Regra.DesativarRegra;
 
 namespace API.Endpoints;
 
@@ -31,32 +29,6 @@ internal static class LeituraEndpoint
                 return Results.Forbid();
 
             return Results.Ok(result.Value);
-        });
-
-        group.MapPatch("/ativar/{id:guid}", async (
-            Guid id,
-            IAtivarRegraUseCase useCase,
-            CancellationToken ct) =>
-        {
-            var result = await useCase.HandleAsync(id, ct);
-
-            if (result.IsNotFound())
-                return Results.NotFound();
-
-            return Results.Ok();
-        });
-
-        group.MapPatch("/desativar/{id:guid}", async (
-            Guid id,
-            IDesativarRegraUseCase useCase,
-            CancellationToken ct) =>
-        {
-            var result = await useCase.HandleAsync(id, ct);
-
-            if (result.IsNotFound())
-                return Results.NotFound();
-
-            return Results.Ok();
         });
 
         return group;
