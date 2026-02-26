@@ -41,7 +41,7 @@ public sealed class CadastrarLeituraUseCase : BaseUseCase<CadastrarLeituraDTO>, 
             _unitOfWork.LeituraAgregadaRepository.Atualizar(leituraAgregada);
         }
 
-        var regras = await _unitOfWork.RegraDeAlertaRepository.ObterRegrasAtivas(tipo, cancellation);
+        var regras = await _unitOfWork.RegraDeAlertaRepository.ObterAtivas(tipo, cancellation);
 
         foreach (var regra in regras)
             await _avaliadorDeRegras.AvaliarAsync(regra, leituraAgregada, cancellation);

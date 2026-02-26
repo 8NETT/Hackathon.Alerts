@@ -8,9 +8,15 @@ internal sealed class RegraDeAlertaRepository : Repository<RegraDeAlerta>, IRegr
 {
     public RegraDeAlertaRepository(ApplicationDbContext context) : base(context) { }
 
-    public async Task<IEnumerable<RegraDeAlerta>> ObterRegrasAtivas(TipoSensor tipo, CancellationToken cancellation) =>
+    public async Task<IEnumerable<RegraDeAlerta>> ObterAtivas(CancellationToken cancellation) =>
         await _dbSet
             .AsNoTracking()
-            .Where(r => r.Tipo == tipo && r.Ativa)
+            .Where(r => r.Ativa)
+            .ToArrayAsync(cancellation);
+
+    public async Task<IEnumerable<RegraDeAlerta>> ObterDoTipo(TipoSensor tipo, CancellationToken cancellation) =>
+        await _dbSet
+            .AsNoTracking()
+            .Where(r => r.Tipo == tipo)
             .ToArrayAsync(cancellation);
 }

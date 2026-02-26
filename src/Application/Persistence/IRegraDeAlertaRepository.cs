@@ -5,5 +5,6 @@ namespace Application.Persistence;
 
 public interface IRegraDeAlertaRepository : IRepository<RegraDeAlerta>
 {
-    Task<IEnumerable<RegraDeAlerta>> ObterRegrasAtivas(TipoSensor tipo, CancellationToken cancellation);
+    Task<IEnumerable<RegraDeAlerta>> ObterAtivas(CancellationToken cancellation);
+    Task<IEnumerable<RegraDeAlerta>> ObterDoTipo(TipoSensor tipo, CancellationToken cancellation);
 }
