@@ -14,9 +14,7 @@ public sealed class LeituraAgregada : BaseEntity
     public DateTimeOffset PrimeiroTimestamp { get; private set; }
     public DateTimeOffset UltimoTimestamp { get; private set; }
     public double UltimoValor { get; private set; }
-    public bool JanelaCompleta => 
-        PrimeiroTimestamp <= Janela.Inicio.AddMinutes(ToleranciaEmMinutos) &&
-        UltimoTimestamp >= Janela.Fim.AddMinutes(-ToleranciaEmMinutos);
+    public bool JanelaCompleta { get; private set; }        
 
     private LeituraAgregada() { Tipo = null!; Unidade = null!; Janela = null!; Estatisticas = null!; }
 
@@ -37,6 +35,8 @@ public sealed class LeituraAgregada : BaseEntity
         PrimeiroTimestamp = leitura.Timestamp;
         UltimoTimestamp = leitura.Timestamp;
         UltimoValor = leitura.Valor;
+
+        AtualizarJanelaCompleta();
     }
 
     public void Agregar(Leitura leitura)
@@ -60,5 +60,14 @@ public sealed class LeituraAgregada : BaseEntity
             UltimoTimestamp = leitura.Timestamp;
             UltimoValor = leitura.Valor;
         }
+
+        AtualizarJanelaCompleta();
+    }
+
+    private void AtualizarJanelaCompleta()
+    {
+        JanelaCompleta =
+            PrimeiroTimestamp <= Janela.Inicio.AddMinutes(ToleranciaEmMinutos) &&
+            UltimoTimestamp >= Janela.Fim.AddMinutes(-ToleranciaEmMinutos);
     }
 }

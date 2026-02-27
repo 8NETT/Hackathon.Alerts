@@ -1,5 +1,6 @@
 ﻿using Application.Persistence;
 using Domain.Messaging;
+using Domain.Persistence;
 using Infrastructure.Messaging;
 using Infrastructure.Persistence;
 using Infrastructure.Persistence.Repositories;
@@ -25,6 +26,7 @@ public static class DependencyInjection
         services.AddScoped<ILeituraAgregadaRepository, LeituraAgregadaRepository>();
         services.AddScoped<IRegraDeAlertaRepository, RegraDeAlertaRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<ILeituraAgregadaPersistence, LeituraAgregadaRepository>();
 
         return services;
     }
@@ -32,11 +34,11 @@ public static class DependencyInjection
     private static IServiceCollection AddMessaging(this IServiceCollection services, IConfiguration configuration) =>
         services
             .AddTalhaoEventHub(configuration)
+            .AddLeituraEventHub(configuration)
             .AddAlertaEventHub(configuration);
 
-    private static IServiceCollection AddTalhaoEventHub(this IServiceCollection services, IConfiguration configuration)
-    {
-        IServiceCollection serviceCollection = services.AddSingleton(sp =>
+    private static IServiceCollection AddTalhaoEventHub(this IServiceCollection services, IConfiguration configuration) =>
+        services.AddHostedService(sp =>
         {
             var connectionString = configuration["TalhaoEventHub:ConnectionString"];
             var consumerGroup = configuration["TalhaoEventHub:ConsumerGroup"];
@@ -45,13 +47,29 @@ public static class DependencyInjection
                 string.IsNullOrWhiteSpace(consumerGroup))
                 throw new InvalidOperationException("Configuração do hub de talhão não localizada no arquivo de configuração.");
 
-            return new EventHubConsumerClient(consumerGroup, connectionString);
+            return new TalhaoEventsConsumerHostedService(
+                sp.GetRequiredService<IServiceScopeFactory>(),
+                consumerGroup,
+                connectionString,
+                sp.GetService<ILogger<TalhaoEventsConsumerHostedService>>());
         });
 
-        services.AddHostedService<TalhaoEventsConsumerHostedService>();
+    private static IServiceCollection AddLeituraEventHub(this IServiceCollection services, IConfiguration configuration) =>
+        services.AddHostedService(sp =>
+        {
+            var connectionString = configuration["LeituraEventHub:ConnectionString"];
+            var consumerGroup = configuration["LeituraEventHub:ConsumerGroup"];
 
-        return services;
-    }
+            if (string.IsNullOrWhiteSpace(connectionString) ||
+                string.IsNullOrWhiteSpace(consumerGroup))
+                throw new InvalidOperationException("Configuração do hub de talhão não localizada no arquivo de configuração.");
+
+            return new LeituraEventsConsumerHostedService(
+                sp.GetRequiredService<IServiceScopeFactory>(),
+                consumerGroup,
+                connectionString,
+                sp.GetService<ILogger<LeituraEventsConsumerHostedService>>());
+        });
 
     private static IServiceCollection AddAlertaEventHub(this IServiceCollection services, IConfiguration configuration)
     {
@@ -60,6 +78,7 @@ public static class DependencyInjection
 
         services.AddSingleton(new EventHubProducerClient(connectionString));
         services.AddScoped<IAlertaPublisher, AlertaEventPublisher>();
+        services.AddScoped<IAntiSpamDeAlertas, AntiSpamDeAlertasEmMemoria>();
 
         return services;
     }

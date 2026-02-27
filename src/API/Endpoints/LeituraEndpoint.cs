@@ -3,6 +3,7 @@ using API.Requests;
 using API.Security;
 using API.Validation;
 using Application.UseCases.Leitura.ObterLeitura;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Endpoints;
 
@@ -16,7 +17,7 @@ internal static class LeituraEndpoint
             .RequireAuthorization();
 
         group.MapGet("/", async (
-            ObterLeituraRequest request,
+            [FromBody] ObterLeituraRequest request,
             IObterLeituraUseCase useCase,
             ICurrentUser user,
             CancellationToken ct) =>

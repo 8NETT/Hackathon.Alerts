@@ -28,6 +28,7 @@ public sealed class CadastrarLeituraUseCase : BaseUseCase<CadastrarLeituraDTO>, 
             return Result.NotFound("Talhão não localizado.");
         
         var tipo = TipoSensor.Parse(dto.Tipo);
+
         var leituraAgregada = await _unitOfWork.LeituraAgregadaRepository.ObterDoHorario(talhao.Id, tipo, dto.Timestamp, cancellation);
 
         if (leituraAgregada is null)
@@ -41,7 +42,7 @@ public sealed class CadastrarLeituraUseCase : BaseUseCase<CadastrarLeituraDTO>, 
             _unitOfWork.LeituraAgregadaRepository.Atualizar(leituraAgregada);
         }
 
-        var regras = await _unitOfWork.RegraDeAlertaRepository.ObterAtivas(tipo, cancellation);
+        var regras = await _unitOfWork.RegraDeAlertaRepository.ObterAtivasDoTipoAsync(tipo, cancellation);
 
         foreach (var regra in regras)
             await _avaliadorDeRegras.AvaliarAsync(regra, leituraAgregada, cancellation);

@@ -20,9 +20,9 @@ public sealed class AvaliadorDeRegras
 
     public async Task AvaliarAsync(RegraDeAlerta regra, LeituraAgregada janelaAtual, CancellationToken cancellation = default)
     {
-        if (!regra.Ativa) 
+        if (!regra.Ativa)
             return;
-        if (regra.Tipo != janelaAtual.Tipo) 
+        if (regra.Tipo != janelaAtual.Tipo)
             return;
 
         // Ponto de corte: "até o fim da janela atual"

@@ -31,14 +31,8 @@ internal sealed class CadastrarRegraValidator : AbstractValidator<CadastrarRegra
             .WithMessage("Valor inválido.");
 
         RuleFor(c => c.JanelasConsecutivas)
-            .NotEmpty()
-            .WithMessage("JanelasConsecutivas é obrigatório.")
-            .GreaterThanOrEqualTo(1)
-            .WithMessage("JanelasConsecutivas deve ser maior ou igual a 1.");
-
-        RuleFor(c => c.ExigirJanelaCompleta)
-            .NotEmpty()
-            .WithMessage("ExigirJanelaCompleta é obrigatório.");
+            .GreaterThanOrEqualTo(0)
+            .WithMessage("JanelasConsecutivas deve ser maior ou igual a 0.");
 
         RuleFor(c => c.Nome)
             .NotEmpty()

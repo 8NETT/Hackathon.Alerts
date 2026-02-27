@@ -9,6 +9,7 @@ builder.AddLogConfiguration();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
 builder.Services.AddValidation();
+builder.Services.AddSwagger();
 builder.Services.AddJwtAuthentication(builder.Configuration);
 
 var app = builder.Build();
@@ -24,5 +25,6 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapLeituraEndpoints();
+app.MapRegraEndpoints();
 
 app.Run();

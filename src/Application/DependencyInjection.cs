@@ -1,4 +1,5 @@
 ﻿using Application.UseCases;
+using Domain.Services;
 
 namespace Application;
 
@@ -21,6 +22,7 @@ public static class DependencyInjection
             .WithScopedLifetime());
 
         services.AddValidatorsFromAssembly(assembly, includeInternalTypes: true);
+        services.AddScoped<AvaliadorDeRegras>();
 
         return services;
     }

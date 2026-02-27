@@ -18,7 +18,7 @@ public sealed class LeituraAgregadaRepository : Repository<LeituraAgregada>, ILe
         return await _dbSet
             .SingleOrDefaultAsync(l => 
                 l.TalhaoId == talhaoId && 
-                l.Tipo == tipo && 
+                l.Tipo.Codigo == tipo.Codigo && 
                 l.Janela.Inicio == inicio, 
                 cancellation);
     }
@@ -41,8 +41,38 @@ public sealed class LeituraAgregadaRepository : Repository<LeituraAgregada>, ILe
             .AsNoTracking()
             .Where(l =>
                 l.TalhaoId == talhaoId &&
-                l.Tipo == tipo &&
+                l.Tipo.Codigo == tipo.Codigo &&
                 l.Janela.Inicio < fimNormalizado)
+            .OrderByDescending(l => l.Janela.Inicio)
+            .Take(quantidade)
+            .ToArrayAsync(cancellation);
+
+        // Retorna em ordem crescente (mais antigo -> mais recente),
+        // o que facilita a validação de consecutividade no domínio.
+        ultimas.Reverse();
+        return ultimas;
+    }
+
+    public async Task<IReadOnlyList<LeituraAgregada>> ObterUltimasJanelasCompletasAsync(
+        Guid talhaoId, TipoSensor tipo, 
+        DateTimeOffset fimExclusivo, 
+        int quantidade, 
+        CancellationToken cancellation = default)
+    {
+        // Normaliza o fimExclusivo para a borda da hora
+        var fimNormalizado = new DateTimeOffset(
+            fimExclusivo.Year, fimExclusivo.Month, fimExclusivo.Day,
+            fimExclusivo.Hour, 0, 0,
+            fimExclusivo.Offset);
+
+        // Busca as últimas N janelas antes de fimNormalizado
+        var ultimas = await _dbSet
+            .AsNoTracking()
+            .Where(l =>
+                l.TalhaoId == talhaoId &&
+                l.Tipo.Codigo == tipo.Codigo &&
+                l.Janela.Inicio < fimNormalizado &&
+                l.JanelaCompleta)
             .OrderByDescending(l => l.Janela.Inicio)
             .Take(quantidade)
             .ToArrayAsync(cancellation);

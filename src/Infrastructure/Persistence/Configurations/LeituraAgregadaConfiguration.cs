@@ -28,5 +28,6 @@ internal sealed class LeituraAgregadaConfiguration : IEntityTypeConfiguration<Le
         builder.Property(l => l.PrimeiroTimestamp).IsRequired();
         builder.Property(l => l.UltimoTimestamp).IsRequired();
         builder.Property(l => l.UltimoValor).IsRequired();
+        builder.Property(l => l.JanelaCompleta).IsRequired();
     }
 }

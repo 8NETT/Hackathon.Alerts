@@ -21,6 +21,8 @@ public sealed record OperadorComparacao : Enumeration
     public static bool TryParse(string? value, out OperadorComparacao? operador) =>
         OperadorComparacaoParser.TryParse(value, out operador);
 
+    public override string ToString() => Codigo;
+
     public bool Compara(double valor, double limite) =>
         Codigo switch
         {
