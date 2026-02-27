@@ -31,5 +31,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapLeituraEndpoints();
 app.MapRegraEndpoints();
+app.MapGet("/health", () => Results.Ok("API is healthy"));
 
 app.Run();
