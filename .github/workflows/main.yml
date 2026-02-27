@@ -1,13 +1,10 @@
 name: Pipeline de CI/CD - Hackathon Alerts
 
-# on:
-#   pull_request:
-#     branches: [ "main" ]
-#   push:
-#     branches: [ "main" ]
-
 on:
-  workflow_dispatch:
+  pull_request:
+    branches: [ "main" ]
+  push:
+    branches: [ "main" ]
 
 jobs:
   build-test-and-publish:
